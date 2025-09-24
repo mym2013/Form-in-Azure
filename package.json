@@ -1,0 +1,24 @@
+{
+  "name": "azure-form",
+  "version": "1.0.0",
+  "main": "form.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mock": "json-server --watch db.json --port 3001"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mym2013/Form-in-Azure.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mym2013/Form-in-Azure/issues"
+  },
+  "homepage": "https://github.com/mym2013/Form-in-Azure#readme",
+  "description": "",
+  "devDependencies": {
+    "json-server": "^1.0.0-beta.3"
+  }
+}
