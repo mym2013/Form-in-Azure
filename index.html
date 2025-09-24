@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>EGGOPOS · Registro</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -167,74 +168,76 @@
 </head>
 
 <body>
-    <div class="card" role="main">
-        <div class="header">
-            <div class="logo" aria-hidden="true">
-                <!-- Coloca ancla2.png (tu icono) en la misma carpeta que este index.html -->
-                <img src="./ancla2.png" alt="EGGOPOS" />
+    <main class="container">
+        <div class="card" role="main">
+            <div class="header">
+                <div class="logo" aria-hidden="true">
+                    <!-- Coloca ancla2.png (tu icono) en la misma carpeta que este index.html -->
+                    <img src="./ancla2.png" alt="EGGOPOS" />
+                </div>
+                <div>
+                    <div class="brand">EGGOPOS</div>
+                    <div class="subtitle">Formulario de registro básico</div>
+                </div>
             </div>
-            <div>
-                <div class="brand">EGGOPOS</div>
-                <div class="subtitle">Formulario de registro básico</div>
-            </div>
+
+            <form id="form-eggo" method="post" novalidate>
+                <div class="grid">
+                    <div class="field">
+                        <label for="nombre1">Nombre 1 *</label>
+                        <input id="nombre1" name="nombre1" required autocomplete="given-name" />
+                        <div class="error" id="err-n1">Ingresa el primer nombre.</div>
+                    </div>
+                    <div class="field">
+                        <label for="nombre2">Nombre 2</label>
+                        <input id="nombre2" name="nombre2" autocomplete="additional-name" />
+                        <div class="hint">Opcional</div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="field">
+                        <label for="apellido1">Apellido 1 *</label>
+                        <input id="apellido1" name="apellido1" required autocomplete="family-name" />
+                        <div class="error" id="err-a1">Ingresa el primer apellido.</div>
+                    </div>
+                    <div class="field">
+                        <label for="apellido2">Apellido 2</label>
+                        <input id="apellido2" name="apellido2" />
+                        <div class="hint">Opcional</div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="field">
+                        <label for="rut">RUT (Chile) *</label>
+                        <input id="rut" name="rut" placeholder="12.345.678-5" required />
+                        <div class="error" id="err-rut">RUT inválido.</div>
+                    </div>
+                    <div class="field">
+                        <label for="correo">Correo *</label>
+                        <input id="correo" name="correo" type="email" required autocomplete="email" />
+                        <div class="error" id="err-mail">Correo inválido.</div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="direccion">Dirección *</label>
+                    <textarea id="direccion" name="direccion" rows="3" required
+                        placeholder="Calle, número, comuna, ciudad"></textarea>
+                    <div class="error" id="err-dir">Ingresa la dirección.</div>
+                </div>
+
+                <!-- Honeypot anti-spam -->
+                <input type="text" id="hp" name="website" style="display:none" tabindex="-1" autocomplete="off" />
+
+                <div class="actions">
+                    <button type="reset" class="btn">Limpiar</button>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </form>
         </div>
-
-        <form id="form-eggo" method="post" novalidate>
-            <div class="grid">
-                <div class="field">
-                    <label for="nombre1">Nombre 1 *</label>
-                    <input id="nombre1" name="nombre1" required autocomplete="given-name" />
-                    <div class="error" id="err-n1">Ingresa el primer nombre.</div>
-                </div>
-                <div class="field">
-                    <label for="nombre2">Nombre 2</label>
-                    <input id="nombre2" name="nombre2" autocomplete="additional-name" />
-                    <div class="hint">Opcional</div>
-                </div>
-            </div>
-
-            <div class="grid">
-                <div class="field">
-                    <label for="apellido1">Apellido 1 *</label>
-                    <input id="apellido1" name="apellido1" required autocomplete="family-name" />
-                    <div class="error" id="err-a1">Ingresa el primer apellido.</div>
-                </div>
-                <div class="field">
-                    <label for="apellido2">Apellido 2</label>
-                    <input id="apellido2" name="apellido2" />
-                    <div class="hint">Opcional</div>
-                </div>
-            </div>
-
-            <div class="grid">
-                <div class="field">
-                    <label for="rut">RUT (Chile) *</label>
-                    <input id="rut" name="rut" placeholder="12.345.678-5" required />
-                    <div class="error" id="err-rut">RUT inválido.</div>
-                </div>
-                <div class="field">
-                    <label for="correo">Correo *</label>
-                    <input id="correo" name="correo" type="email" required autocomplete="email" />
-                    <div class="error" id="err-mail">Correo inválido.</div>
-                </div>
-            </div>
-
-            <div class="field">
-                <label for="direccion">Dirección *</label>
-                <textarea id="direccion" name="direccion" rows="3" required
-                    placeholder="Calle, número, comuna, ciudad"></textarea>
-                <div class="error" id="err-dir">Ingresa la dirección.</div>
-            </div>
-
-            <!-- Honeypot anti-spam -->
-            <input type="text" id="hp" name="website" style="display:none" tabindex="-1" autocomplete="off" />
-
-            <div class="actions">
-                <button type="reset" class="btn">Limpiar</button>
-                <button type="submit" class="btn btn-primary">Enviar</button>
-            </div>
-        </form>
-    </div>
+    </main>
 
     <script>
         // === Configura aquí tu endpoint de Azure Functions cuando lo tengas ===
