@@ -1,25 +1,41 @@
-// Endpoint (ajustar cuando tengas Azure Functions)
-const ACTION_URL = "https://TU-FUNCTION.azurewebsites.net/api/submit";
+// ===== Helpers base =====
+const f = document.querySelector("form");                 // referencia al <form>
+const $ = (id) => document.getElementById(id) || null;    // helper por id (tolerante)
 
-const f = document.getElementById("form-eggo");
-const $ = (id) => document.getElementById(id);
+// Mostrar/ocultar error (tolerante si el nodo no existe)
+function show(el, ok) { if (!el) return; el.style.display = ok ? "none" : "block"; }
 
-function limpioRut(rut) { return rut.replace(/^CL|^cl/, '').replace(/[.\s]/g, '').toUpperCase(); }
-function dvRut(num) {
-    let M = 0, S = 1;
-    for (; num; num = Math.floor(num / 10)) S = (S + num % 10 * (9 - M++ % 6)) % 11;
-    return S ? String(S - 1) : 'K';
+// ===== RUT Chile =====
+// Normaliza: quita puntos/guion y pasa a mayúsculas
+function _normalizeRut(r) {
+    return String(r || "").replace(/\./g, "").replace(/-/g, "").toUpperCase();
 }
+// Calcula dígito verificador
+function _dv(body) {
+    let sum = 0, mul = 2;
+    for (let i = body.length - 1; i >= 0; i--) {
+        sum += parseInt(body[i], 10) * mul;
+        mul = (mul === 7) ? 2 : mul + 1;
+    }
+    const res = 11 - (sum % 11);
+    if (res === 11) return "0";
+    if (res === 10) return "K";
+    return String(res);
+}
+// Valida rut completo (con o sin formato)
 function validaRut(rut) {
-    const t = limpioRut(rut);
-    if (!/^\d{7,8,9}-[\dK]$/.test(t)) return false;
-    const [n, d] = t.split('-');
-    return dvRut(parseInt(n, 10)) === d.toUpperCase();
+    const norm = _normalizeRut(rut);
+    if (norm.length < 2) return false;
+    const body = norm.slice(0, -1);
+    const dv = norm.slice(-1);
+    if (!/^\d+$/.test(body)) return false;
+    return _dv(body) === dv;
 }
-function show(el, ok) { el.style.display = ok ? "none" : "block"; }
 
+// ===== Submit =====
 f.addEventListener("submit", async (e) => {
     e.preventDefault();
+    console.log("[submit] handler activo");
 
     const v = {
         nombre1: f.nombre1.value.trim(),
@@ -32,27 +48,31 @@ f.addEventListener("submit", async (e) => {
         website: f.website.value.trim() // honeypot
     };
 
+    // Validaciones UI
     let ok = true;
-    show($("err-n1"), !!v.nombre1); ok = ok && !!v.nombre1;
-    show($("err-a1"), !!v.apellido1); ok = ok && !!v.apellido1;
-    const rOk = validaRut(v.rut); show($("err-rut"), rOk); ok = ok && rOk;
-    const mOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.correo); show($("err-mail"), mOk); ok = ok && mOk;
-    show($("err-dir"), !!v.direccion); ok = ok && !!v.direccion;
+    show($("#err-n1"), !!v.nombre1); ok = ok && !!v.nombre1;
+    show($("#err-a1"), !!v.apellido1); ok = ok && !!v.apellido1;
+    const rOk = validaRut(v.rut); show($("#err-rut"), rOk); ok = ok && rOk;
+    const mOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.correo);
+    show($("#err-mail"), mOk); ok = ok && mOk;
+    show($("#err-dir"), !!v.direccion); ok = ok && !!v.direccion;
 
-    if (v.website) return;        // bot
-    if (!ok) return;              // errores en UI
+    // Anti-bot y corte si hay errores
+    if (v.website) return; // honeypot
+    if (!ok) return;       // errores en UI
 
     try {
-        const resp = await fetch(ACTION_URL, {
+        console.log("[submit] enviando a /submissions", v);
+        const resp = await fetch("http://localhost:3001/submissions", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(v)
         });
         if (!resp.ok) throw new Error("Error de servidor");
-        alert("¡Registro enviado con éxito!");
+        alert("Registro enviado y guardado en JSON Server con éxito!");
         f.reset();
     } catch (err) {
+        console.error("[submit] error", err);
         alert("No se pudo enviar. Intenta nuevamente.");
-        console.error(err);
     }
 });
