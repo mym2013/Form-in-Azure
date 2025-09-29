@@ -25,11 +25,10 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_ROCK_0A333D110 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          #### Configuración corregida:
-          app_location: "/"
-          api_location: ""       # vacío porque no hay API en main
-          output_location: ""    # raíz
-          skip_app_build: true   # evita Oryx; deploy directo del front
+          app_location: "/"     # Front en raíz
+          api_location: "api"   # API en carpeta /api
+          output_location: "/"  # Si tu front no genera build, puedes dejar "" (vacío)
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
@@ -41,3 +40,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_ROCK_0A333D110 }}
           action: "close"
+
