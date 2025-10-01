@@ -8,8 +8,7 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
-      workflow_dispatch: {}
-
+  workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
@@ -17,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Build And Deploy
@@ -29,7 +28,8 @@ jobs:
           action: "upload"
           app_location: "/"     # Front en raíz
           api_location: "api"   # API en carpeta /api
-          output_location: "/"  # Si tu front no genera build, puedes dejar "" (vacío)
+          output_location: ""   # Sin build (directo)
+          skip_app_build: true  # Evita Oryx; deploy directo
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
