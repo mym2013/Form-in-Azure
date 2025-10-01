@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Entradas</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            margin: 24px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .muted {
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th,
+        td {
+            border: 1px solid #eee;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #fafafa;
+        }
+
+        #alert {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #f3d4d4;
+            background: #fff3f3;
+            color: #8a2d2d;
+            display: none;
+        }
+
+        #empty {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px dashed #ccc;
+            background: #fafafa;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 style="margin:0">Entradas</h1>
+        <button id="refreshBtn">Refrescar</button>
+        <span id="status" class="muted"></span>
+    </header>
+
+    <div id="alert"></div>
+    <div id="empty">No hay registros aún.</div>
+
+    <div id="count" class="muted"></div>
+
+    <table id="tbl" style="display:none">
+        <thead>
+            <tr>
+                <th>partitionKey</th>
+                <th>rowKey</th>
+                <th>timestamp</th>
+                <!-- Ajusta/añade columnas de tu formulario aquí: -->
+                <th>nombre</th>
+                <th>email</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+
+    <script>
+        const $ = sel => document.querySelector(sel);
+        const $status = $("#status");
+        const $alert = $("#alert");
+        const $empty = $("#empty");
+        const $count = $("#count");
+        const $tbl = $("#tbl");
+        const $tbody = $("#tbody");
+        const $btn = $("#refreshBtn");
+
+        async function load() {
+            $alert.style.display = "none";
+            $empty.style.display = "none";
+            $tbl.style.display = "none";
+            $status.textContent = "Cargando…";
+
+            try {
+                const res = await fetch("/api/list", { method: "GET" });
+                if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
+                const data = await res.json();
+
+                $count.textContent = `Total: ${data.count}`;
+                $status.textContent = "";
+
+                if (!data.items || data.items.length === 0) {
+                    $empty.style.display = "block";
+                    return;
+                }
+
+                // Render tabla
+                $tbody.innerHTML = "";
+                for (const it of data.items) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+            <td>${it.partitionKey ?? ""}</td>
+            <td>${it.rowKey ?? ""}</td>
+            <td>${it.timestamp ?? ""}</td>
+            <td>${it.nombre ?? ""}</td>
+            <td>${it.email ?? ""}</td>
+          `;
+                    $tbody.appendChild(tr);
+                }
+                $tbl.style.display = "table";
+            } catch (err) {
+                $status.textContent = "";
+                $alert.textContent = "No se pudieron cargar las entradas. Intenta nuevamente.";
+                $alert.style.display = "block";
+                console.error(err);
+            }
+        }
+
+        $btn.addEventListener("click", load);
+        load();
+    </script>
+</body>
+
+</html>
