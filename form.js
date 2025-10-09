@@ -59,20 +59,31 @@ f.addEventListener("submit", async (e) => {
 
     // Anti-bot y corte si hay errores
     if (v.website) return; // honeypot
-    if (!ok) return;       // errores en UI
+    console.log("[submit] flags", {
+        n1: !!v.nombre1,
+        a1: !!v.apellido1,
+        rOk,
+        mOk,
+        dirOk: !!v.direccion,
+        hp: !!v.website
+    });
+    if (!ok) return; // errores en UI
+
 
     try {
-        console.log("[submit] enviando a /submissions", v);
-        const resp = await fetch("http://localhost:3001/submissions", {
+        console.log("[submit] enviando a /api/submit", v);
+        const resp = await fetch("/api/submit", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(v)
         });
         if (!resp.ok) throw new Error("Error de servidor");
-        alert("Registro enviado y guardado en JSON Server con éxito!");
+        alert("✔️ Registro enviado correctamente a Azure!");
         f.reset();
+        // window.location.href = "/entradas.html"; // opcional
     } catch (err) {
         console.error("[submit] error", err);
-        alert("No se pudo enviar. Intenta nuevamente.");
+        alert("❌ No se pudo enviar. Intenta nuevamente.");
     }
+
 });

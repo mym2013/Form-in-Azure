@@ -11,12 +11,15 @@ module.exports = async function (context, req) {
 
     // Body JSON
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
-    const { nombre, rut, comentario } = body;
+    const { nombre, nombre1, apellido1, rut, comentario } = body;
 
-    if (!nombre || !rut) {
+    const nombreFinal = nombre || `${nombre1 || ""} ${apellido1 || ""}`.trim();
+
+    if (!nombreFinal || !rut) {
       context.res = { status: 400, body: "Faltan campos obligatorios: nombre y rut." };
       return;
     }
+
 
     // Cliente de tabla
     const tableName = "entradas";
